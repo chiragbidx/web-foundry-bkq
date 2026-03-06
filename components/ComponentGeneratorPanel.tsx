@@ -2,6 +2,16 @@
 
 import { useState } from "react";
 
+// Utility to strip ```
+function stripCodeFences(str: string | undefined) {
+  if (!str) return "";
+  // Handles ```html ... ``` and generic ```
+  return str
+    .replace(/```(html|jsx)?\s*/gi, "")
+    .replace(/```/g, "")
+    .trim();
+}
+
 export default function ComponentGeneratorPanel() {
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
@@ -39,10 +49,17 @@ export default function ComponentGeneratorPanel() {
 
   async function handleCopy(type: "react" | "html") {
     if (!result) return;
-    await navigator.clipboard.writeText(result[type]);
+    const clean =
+      type === "html"
+        ? stripCodeFences(result.html)
+        : stripCodeFences(result.react);
+    await navigator.clipboard.writeText(clean);
     setCopied(type);
     setTimeout(() => setCopied(null), 1300);
   }
+
+  const cleanReact = stripCodeFences(result?.react);
+  const cleanHtml = stripCodeFences(result?.html);
 
   return (
     <form
@@ -90,7 +107,7 @@ export default function ComponentGeneratorPanel() {
                 </button>
               </div>
               <pre className="bg-zinc-50 rounded-lg p-3 text-xs overflow-x-auto border border-[#fb7232]/15 text-[#2d2022]">
-                {result.react}
+                {cleanReact}
               </pre>
             </div>
             <div className="flex flex-col">
@@ -105,12 +122,12 @@ export default function ComponentGeneratorPanel() {
                 </button>
               </div>
               <pre className="bg-zinc-50 rounded-lg p-3 text-xs overflow-x-auto border border-[#fb7232]/15 text-[#2d2022]">
-                {result.html}
+                {cleanHtml}
               </pre>
             </div>
           </div>
           {/* Live Preview */}
-          {result.html && !result.error && (
+          {cleanHtml && !result.error && (
             <div className="mt-2 p-4 rounded-lg border border-[#fb7232]/25 bg-[#fff5ee]">
               <label className="block mb-2 text-xs font-semibold text-[#fb7232] uppercase tracking-wider">
                 Live Preview
@@ -118,7 +135,7 @@ export default function ComponentGeneratorPanel() {
               <div
                 className="relative w-full min-h-[40px] p-4 rounded-md bg-white border border-[#fb7232]/15 overflow-x-auto"
                 // eslint-disable-next-line react/no-danger
-                dangerouslySetInnerHTML={{ __html: result.html }}
+                dangerouslySetInnerHTML={{ __html: cleanHtml }}
               />
               <div className="mt-1 text-[10px] text-[#c75829] opacity-80">
                 (AI-generated content; preview is static and not sanitized. Only use for trusted UI prototyping.)
