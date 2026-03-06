@@ -76,38 +76,56 @@ export default function ComponentGeneratorPanel() {
         )}
       </button>
       {result && (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="font-bold text-[#c75829]">React (JSX)</span>
-              <button
-                type="button"
-                onClick={() => handleCopy("react")}
-                className="text-xs px-2 py-1 rounded bg-[#ffede5] text-[#fb7232] font-semibold transition hover:bg-[#fb7232] hover:text-white"
-              >
-                {copied === "react" ? "Copied!" : "Copy"}
-              </button>
+        <>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="font-bold text-[#c75829]">React (JSX)</span>
+                <button
+                  type="button"
+                  onClick={() => handleCopy("react")}
+                  className="text-xs px-2 py-1 rounded bg-[#ffede5] text-[#fb7232] font-semibold transition hover:bg-[#fb7232] hover:text-white"
+                >
+                  {copied === "react" ? "Copied!" : "Copy"}
+                </button>
+              </div>
+              <pre className="bg-zinc-50 rounded-lg p-3 text-xs overflow-x-auto border border-[#fb7232]/15 text-[#2d2022]">
+                {result.react}
+              </pre>
             </div>
-            <pre className="bg-zinc-50 rounded-lg p-3 text-xs overflow-x-auto border border-[#fb7232]/15 text-[#2d2022]">
-              {result.react}
-            </pre>
-          </div>
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="font-bold text-[#c75829]">HTML</span>
-              <button
-                type="button"
-                onClick={() => handleCopy("html")}
-                className="text-xs px-2 py-1 rounded bg-[#ffede5] text-[#fb7232] font-semibold transition hover:bg-[#fb7232] hover:text-white"
-              >
-                {copied === "html" ? "Copied!" : "Copy"}
-              </button>
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="font-bold text-[#c75829]">HTML</span>
+                <button
+                  type="button"
+                  onClick={() => handleCopy("html")}
+                  className="text-xs px-2 py-1 rounded bg-[#ffede5] text-[#fb7232] font-semibold transition hover:bg-[#fb7232] hover:text-white"
+                >
+                  {copied === "html" ? "Copied!" : "Copy"}
+                </button>
+              </div>
+              <pre className="bg-zinc-50 rounded-lg p-3 text-xs overflow-x-auto border border-[#fb7232]/15 text-[#2d2022]">
+                {result.html}
+              </pre>
             </div>
-            <pre className="bg-zinc-50 rounded-lg p-3 text-xs overflow-x-auto border border-[#fb7232]/15 text-[#2d2022]">
-              {result.html}
-            </pre>
           </div>
-        </div>
+          {/* Live Preview */}
+          {result.html && !result.error && (
+            <div className="mt-2 p-4 rounded-lg border border-[#fb7232]/25 bg-[#fff5ee]">
+              <label className="block mb-2 text-xs font-semibold text-[#fb7232] uppercase tracking-wider">
+                Live Preview
+              </label>
+              <div
+                className="relative w-full min-h-[40px] p-4 rounded-md bg-white border border-[#fb7232]/15 overflow-x-auto"
+                // eslint-disable-next-line react/no-danger
+                dangerouslySetInnerHTML={{ __html: result.html }}
+              />
+              <div className="mt-1 text-[10px] text-[#c75829] opacity-80">
+                (AI-generated content; preview is static and not sanitized. Only use for trusted UI prototyping.)
+              </div>
+            </div>
+          )}
+        </>
       )}
       {result?.error && (
         <div className="mt-2 text-xs text-red-500 font-medium">{result.error}</div>
